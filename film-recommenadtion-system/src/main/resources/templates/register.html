@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register - Film Recommendation System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-container { max-width: 400px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        .error { color: red; }
+        .success { color: green; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; }
+        button { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Register New User</h2>
+        
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+        <div th:if="${success}" class="success" th:text="${success}"></div>
+        
+        <form th:action="@{/register}" method="post">
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" name="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Favorite Genre:</label>
+                <select name="favoriteGenre" required>
+                    <option value="Action">Action</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Horror">Horror</option>
+                    <option value="SciFi">Science Fiction</option>
+                </select>
+            </div>
+            
+            <button type="submit">Register</button>
+        </form>
+        
+        <p><a th:href="@{/login}">Already have an account? Login here</a></p>
+    </div>
+</body>
+</html>
