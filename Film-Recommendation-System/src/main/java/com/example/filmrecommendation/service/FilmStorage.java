@@ -1,12 +1,14 @@
 package com.example.filmrecommendation.service;
 
 import com.example.filmrecommendation.model.Film;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-
+@Service
 public class FilmStorage {
 	private final List<Film> films;
 	
