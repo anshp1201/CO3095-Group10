@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+<head>
+	<title>Recommendations</title>
+</head>
+<body>
+	<h1>Welcome, <span th:text="${user.username}"></span>!</h1>
+	<h2>Your Recommendations:</h2>
+	<ul>
+		<li th:each="film : ${recommendations}"
+			<strong th:text="${film.title}"></strong>
+			<p>Genre: <span th:text="${film.genre}"</span></p>
+			<p>Director: <span th:text="${film.director}"</span></p>
+			<p>Average Rating: <span th:text="{film.averageRating}"</span></p>
+		</li>
+	</ul>
+</body>
+</html>
+					

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Film List</title>
+</head>
+<body>
+    <h1>Available Films</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Director</th>
+                <th>Average Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="film : ${films}">
+                <td th:text="${film.title}"></td>
+                <td th:text="${film.genre}"></td>
+                <td th:text="${film.director}"></td>
+                <td th:text="${film.averageRating}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Back to Dashboard Button -->
+    <form action="/dashboard" method="get">
+        <button type="submit">Back to Dashboard</button>
+    </form>
+</body>
+</html>
