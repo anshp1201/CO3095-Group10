@@ -2,10 +2,116 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dashboard - Film Recommendation System</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f9;
+            color: #333;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header h1 {
+            font-size: 28px;
+            color: #007bff;
+            margin: 0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-buttons a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-buttons a:hover {
+            background-color: #0056b3;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .action-buttons form {
+            margin: 0;
+        }
+
+        .action-buttons button {
+            padding: 15px 25px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            min-width: 200px;
+        }
+
+        .action-buttons button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <a href="/profile">Profile</a>
-    <a href="/logout">Logout</a>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Dashboard</h1>
+            <div class="nav-buttons">
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <form action="/recommendations" method="get">
+                <button type="submit">Get Recommendations</button>
+            </form>
+            <form action="/films" method="get">
+                <button type="submit">View Film List</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
