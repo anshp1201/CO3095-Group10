@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Controller
 public class DashboardController {
 
@@ -15,7 +18,11 @@ public class DashboardController {
         if (loggedInUser == null) {
             return "redirect:/login";
         }
+
+        List<String> genres = Arrays.asList("Action", "Comedy", "Sci-Fi", "Romance");
         model.addAttribute("user", loggedInUser);
+        model.addAttribute("genres", genres);
+
         return "dashboard";
     }
 }

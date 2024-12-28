@@ -30,6 +30,7 @@ public class FilmStorage {
         films.add(new Film("The Silence of the Lambs", "Thriller", "Jonathan Demme", 8.6));
         films.add(new Film("Star Wars: Episode IV - A New Hope", "Sci-Fi", "George Lucas", 8.6));
         films.add(new Film("One Flew Over the Cuckoo's Nest", "Drama", "Milos Forman", 8.7));
+        films.add(new Film("The hangover", "Comedy", "Todd Phillip", 4.6));
         
 	}
 	
@@ -43,6 +44,11 @@ public class FilmStorage {
 	            .sorted((f1, f2) -> Double.compare(f2.getAverageRating(), f1.getAverageRating()))
 	            .collect(Collectors.toList());
 	}
+	public List<Film> getMoviesByGenre(String genre) {
+        return films.stream()
+                .filter(film -> film.getGenre().equalsIgnoreCase(genre))
+                .collect(Collectors.toList());
+    }
 
 
 }
