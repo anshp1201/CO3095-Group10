@@ -10,14 +10,25 @@ public class User implements Serializable {
     private String favoriteGenre;
     
    
+    
+    //Getters
     public User() {}
     
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getUsername() {
+    	return username; }
     
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setUsername(String username) {
+    	this.username = username; }
     
-    public String getFavoriteGenre() { return favoriteGenre; }
-    public void setFavoriteGenre(String favoriteGenre) { this.favoriteGenre = favoriteGenre; }
+    public String getPassword() {
+    	return password; }
+    
+    public void setPassword(String password) { 
+    	this.password = password; }
+    
+    public String getFavoriteGenre() {
+    	return favoriteGenre; }
+    
+    public void setFavoriteGenre(String favoriteGenre) {
+    	this.favoriteGenre = favoriteGenre; }
 }

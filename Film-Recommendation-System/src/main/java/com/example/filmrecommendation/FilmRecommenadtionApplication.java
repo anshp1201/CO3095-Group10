@@ -15,6 +15,7 @@ public class FilmRecommenadtionApplication {
 		SpringApplication.run(FilmRecommenadtionApplication.class, args);
 	}
 	
+	// Creates a bean to encrypt passwords
 	@Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

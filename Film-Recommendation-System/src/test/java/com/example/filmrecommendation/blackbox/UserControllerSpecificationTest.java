@@ -21,6 +21,7 @@ public class UserControllerSpecificationTest {
     private RedirectAttributes redirectAttributes;
     private PasswordEncoder passwordEncoder;
 
+    
     @BeforeEach
     void setUp() {
         userStorage = mock(UserStorage.class);
@@ -39,96 +40,89 @@ public class UserControllerSpecificationTest {
         }
     }
 
+    // Tests successful user registration.
     @Test
     void testSuccessfulRegistration() {
-        // Arrange
+        
         User user = new User();
         user.setUsername("testUser");
         user.setPassword("password123");
         when(userStorage.addUser(any(User.class))).thenReturn(true);
-
-        // Act
+        
         String result = userController.registerUser(user, redirectAttributes);
-
-        // Assert
         assertEquals("redirect:/login", result);
         verify(redirectAttributes).addFlashAttribute("success", "Registration successful!");
     }
 
+    // Tests registration with an existing username.
     @Test
     void testRegistrationWithExistingUsername() {
-        // Arrange
+        
         User user = new User();
         user.setUsername("existingUser");
         user.setPassword("password123");
         when(userStorage.addUser(any(User.class))).thenReturn(false);
 
-        // Act
         String result = userController.registerUser(user, redirectAttributes);
 
-        // Assert
         assertEquals("redirect:/register", result);
         verify(redirectAttributes).addFlashAttribute("error", "Username already exists!");
     }
 
+    // Tests successful user login.
     @Test
     void testSuccessfulLogin() {
-        // Arrange
+        
         String username = "testUser";
         String password = "password123";
         when(userStorage.validateUser(username, password)).thenReturn(true);
         when(userStorage.getUserByUsername(username)).thenReturn(new User());
 
-        // Act
         String result = userController.login(username, password, session, redirectAttributes);
 
-        // Assert
         assertEquals("redirect:/dashboard", result);
         verify(session).setAttribute(eq("loggedInUser"), any(User.class));
     }
 
+    // Tests failed user login.
     @Test
     void testFailedLogin() {
-        // Arrange
+        
         String username = "testUser";
         String password = "wrongPassword";
         when(userStorage.validateUser(username, password)).thenReturn(false);
 
-        // Act
         String result = userController.login(username, password, session, redirectAttributes);
 
-        // Assert
         assertEquals("redirect:/login", result);
         verify(redirectAttributes).addFlashAttribute("error", "Invalid username or password");
     }
 
+    // Tests successful password change.
     @Test
     void testChangePasswordSuccess() {
-        // Arrange
+        
         User user = new User();
         user.setUsername("testUser");
         when(session.getAttribute("loggedInUser")).thenReturn(user);
         when(userStorage.changePassword("testUser", "oldPass", "newPassword123")).thenReturn(true);
 
-        // Act
         String result = userController.changePassword("oldPass", "newPassword123", session, redirectAttributes);
 
-        // Assert
         assertEquals("redirect:/profile", result);
         verify(redirectAttributes).addFlashAttribute("success", "Password changed successfully");
     }
 
+    // Tests password change with a short new password.
     @Test
     void testChangePasswordWithShortPassword() {
-        // Arrange
+        
         User user = new User();
         user.setUsername("testUser");
         when(session.getAttribute("loggedInUser")).thenReturn(user);
 
-        // Act
         String result = userController.changePassword("oldPass", "short", session, redirectAttributes);
 
-        // Assert
         assertEquals("redirect:/profile", result);
         verify(redirectAttributes).addFlashAttribute("error", "Password must be at least 8 characters long");
     }
