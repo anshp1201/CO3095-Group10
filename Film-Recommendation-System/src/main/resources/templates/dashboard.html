@@ -92,6 +92,98 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+		
+		.reviews-section {
+		            margin-top: 30px;
+		            padding: 20px;
+		            background: #fff;
+		            border-radius: 8px;
+		            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		        }
+
+		        .reviews-section h2 {
+		            color: #007bff;
+		            margin-bottom: 20px;
+		        }
+
+		        .review-form {
+		            margin-top: 20px;
+		            padding: 20px;
+		            background: #f8f9fa;
+		            border-radius: 8px;
+		        }
+
+		        .form-group {
+		            margin-bottom: 15px;
+		        }
+
+		        .form-group label {
+		            display: block;
+		            margin-bottom: 5px;
+		            font-weight: bold;
+		        }
+
+		        .form-group select, 
+		        .form-group textarea {
+		            width: 100%;
+		            padding: 8px;
+		            border: 1px solid #ddd;
+		            border-radius: 4px;
+		            font-size: 14px;
+		        }
+
+		        .form-group textarea {
+		            min-height: 100px;
+		            resize: vertical;
+		        }
+
+		        .submit-review {
+		            background-color: #28a745;
+		            color: white;
+		            padding: 10px 20px;
+		            border: none;
+		            border-radius: 4px;
+		            cursor: pointer;
+		            font-size: 16px;
+		        }
+
+		        .submit-review:hover {
+		            background-color: #218838;
+		        }
+
+		        .reviews-list {
+		            margin-top: 30px;
+		        }
+
+		        .review-item {
+		            padding: 15px;
+		            margin-bottom: 15px;
+		            background: #f8f9fa;
+		            border-radius: 8px;
+		            border-left: 4px solid #007bff;
+		        }
+
+		        .review-header {
+		            display: flex;
+		            justify-content: space-between;
+		            margin-bottom: 10px;
+		        }
+
+		        .review-rating {
+		            color: #ffc107;
+		            font-size: 18px;
+		        }
+
+		        .review-content {
+		            color: #666;
+		            font-size: 14px;
+		        }
+
+		        .review-meta {
+		            font-size: 12px;
+		            color: #999;
+		            margin-top: 10px;
+		        }
     </style>
 </head>
 <body>
@@ -113,5 +205,136 @@
             </form>
         </div>
     </div>
+	
+	
+	<div class="reviews-section">
+	            <h2>Film Reviews</h2>
+	            <div class="review-form">
+	                <h3>Write a Review</h3>
+	                <form id="reviewForm">
+	                    <div class="form-group">
+	                        <label for="filmSelect">Select Film</label>
+	                        <select id="filmSelect" required>
+	                            <option value="">Choose a film...</option>
+	                            <option th:each="film : ${films}" th:value="${film.title}" th:text="${film.title}"></option>
+	                        </select>
+	                    </div>
+	                    
+	                    <div class="form-group">
+	                        <label for="rating">Rating</label>
+	                        <select id="rating" required>
+	                            <option value="5">5 Stars</option>
+	                            <option value="4">4 Stars</option>
+	                            <option value="3">3 Stars</option>
+	                            <option value="2">2 Stars</option>
+	                            <option value="1">1 Star</option>
+	                        </select>
+	                    </div>
+
+	                    <div class="form-group">
+	                        <label for="reviewContent">Your Review</label>
+	                        <textarea id="reviewContent" required placeholder="Write your review here..."></textarea>
+	                    </div>
+
+	                    <button type="submit" class="submit-review">Submit Review</button>
+	                </form>
+	            </div>
+
+	            <div class="reviews-list" id="reviewsList">
+	                <!-- Reviews will be loaded here dynamically -->
+	            </div>
+	        </div>
+	    </div>
+
+	    <script th:inline="javascript">
+	        /*<![CDATA[*/
+	        // Get the logged-in username from Thymeleaf
+			const username = /*[[${user.username}]]*/ 'user';
+
+
+
+	        document.addEventListener('DOMContentLoaded', function() {
+	            const reviewForm = document.getElementById('reviewForm');
+	            const filmSelect = document.getElementById('filmSelect');
+	            
+	            // Load reviews when a film is selected
+	            filmSelect.addEventListener('change', loadReviews);
+	            
+	            // Handle review submission
+	            reviewForm.addEventListener('submit', function(e) {
+	                e.preventDefault();
+	                submitReview();
+	            });
+
+	            // Initial load of reviews if a film is selected
+	            if (filmSelect.value) {
+	                loadReviews();
+	            }
+	        });
+
+	        function loadReviews() {
+	            const filmTitle = document.getElementById('filmSelect').value;
+	            if (!filmTitle) return;
+
+	            fetch(`/api/reviews/film/${encodeURIComponent(filmTitle)}`)
+	                .then(response => response.json())
+	                .then(reviews => {
+	                    displayReviews(reviews);
+	                })
+	                .catch(error => {
+	                    console.error('Error loading reviews:', error);
+	                });
+	        }
+
+	        function displayReviews(reviews) {
+	            const reviewsList = document.getElementById('reviewsList');
+	            reviewsList.innerHTML = '';
+
+	            reviews.forEach(review => {
+	                const reviewElement = document.createElement('div');
+	                reviewElement.className = 'review-item';
+	                reviewElement.innerHTML = `
+	                    <div class="review-header">
+	                        <strong>${review.username}</strong>
+	                        <span class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</span>
+	                    </div>
+	                    <div class="review-content">${review.content}</div>
+	                    <div class="review-meta">Posted on ${new Date(review.createdAt).toLocaleDateString()}</div>
+	                `;
+	                reviewsList.appendChild(reviewElement);
+	            });
+	        }
+
+	        function submitReview() {
+	            const review = {
+	                username: username,
+	                filmTitle: document.getElementById('filmSelect').value,
+	                content: document.getElementById('reviewContent').value,
+	                rating: parseInt(document.getElementById('rating').value)
+	            };
+
+	            fetch('/api/reviews', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                },
+	                body: JSON.stringify(review)
+	            })
+	            .then(response => {
+	                if (response.ok) {
+	                    alert('Review submitted successfully!');
+	                    document.getElementById('reviewForm').reset();
+	                    loadReviews();
+	                } else {
+	                    throw new Error('Failed to submit review');
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Error:', error);
+	                alert('Error submitting review. Please try again.');
+	            });
+	        }
+	        /*]]>*/
+	    </script>
 </body>
 </html>
