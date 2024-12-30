@@ -26,6 +26,7 @@ public class DashboardController {
         List<String> genres = Arrays.asList("Action", "Comedy", "Sci-Fi", "Romance");
         model.addAttribute("user", loggedInUser);
         model.addAttribute("films", filmStorage.getAllFilms());
+        model.addAttribute("genres", genres);
         
         return "dashboard";
     }
