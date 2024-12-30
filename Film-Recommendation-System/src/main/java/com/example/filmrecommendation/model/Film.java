@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public class Film implements Serializable{
 	private static final long serialVersionUID =1L;
+	private String filmid;
 	private String title;
 	private String genre;
 	private String director;
@@ -14,13 +15,23 @@ public class Film implements Serializable{
 	
 	public Film() {}
 	
-	public Film(String title, String genre, String director, double averageRating) {
+	public Film(String filmid, String title, String genre, String director, double averageRating) {
 		super();
+		this.filmid = filmid;
 		this.title = title;
 		this.genre = genre;
 		this.director = director;
 		this.averageRating = averageRating;
 	}
+	
+	public String getFilmid() {
+		return filmid;
+	}
+	
+	public void setFilmid(String filmid) {
+		this.filmid = filmid;
+	}
+	
 	
 	
 	public String getTitle() {
