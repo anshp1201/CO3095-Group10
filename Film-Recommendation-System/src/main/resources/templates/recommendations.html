@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Recommendations</title>
 </head>
@@ -7,11 +7,16 @@
 	<h1>Welcome, <span th:text="${user.username}"></span>!</h1>
 	<h2>Your Recommendations:</h2>
 	<ul>
-		<li th:each="film : ${recommendations}"
+		<li th:each="film : ${recommendations}">
 			<strong th:text="${film.title}"></strong>
-			<p>Genre: <span th:text="${film.genre}"</span></p>
-			<p>Director: <span th:text="${film.director}"</span></p>
-			<p>Average Rating: <span th:text="{film.averageRating}"</span></p>
+			<p>Genre: <span th:text="${film.genre}"></span></p>
+			<p>Director: <span th:text="${film.director}"></span></p>
+			<p>Film ID : <span th:text="${film.filmid}"></p>
+			<!--p>Average Rating: <span th:text="{film.averageRating}"></span></p-->
+			<!--a th:href="@{/share(FilmID=${film.filmid})}">Share This!</a-->
+			<!--a th:href="@{/share?FilmID=${film.filmid}}">Share This!</a-->
+			<a th:href="@{'/share?FilmID=' + ${film.filmid}}">Share This!</a>
+			<!--a th:href="@{/share/?FilmID=2}">Share This!</a-->
 		</li>
 	</ul>
 </body>
