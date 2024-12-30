@@ -23,6 +23,7 @@ public class DashboardController {
         }
         
         // Add both user and films to the model
+        List<String> genres = Arrays.asList("Action", "Comedy", "Sci-Fi", "Romance");
         model.addAttribute("user", loggedInUser);
         model.addAttribute("films", filmStorage.getAllFilms());
         
