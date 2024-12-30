@@ -1,14 +1,15 @@
 package com.example.filmrecommendation.whitebox;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.filmrecommendation.service.UserStorage;
 import com.example.filmrecommendation.model.User;
+
+import java.io.File;
 
 public class UserStorageStatementCoverageTest {
     private UserStorage userStorage;
@@ -18,107 +19,117 @@ public class UserStorageStatementCoverageTest {
     void setUp() {
         userStorage = new UserStorage();
         passwordEncoder = new BCryptPasswordEncoder();
-        // Manually inject the passwordEncoder
-        injectPasswordEncoder(userStorage, passwordEncoder);
-    }
-
-    // Utility method to inject the passwordEncoder
-    private void injectPasswordEncoder(UserStorage userStorage, BCryptPasswordEncoder passwordEncoder) {
+        
+        
         try {
             java.lang.reflect.Field encoderField = UserStorage.class.getDeclaredField("passwordEncoder");
             encoderField.setAccessible(true);
             encoderField.set(userStorage, passwordEncoder);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to inject password encoder", e);
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Clean up the users.dat file
+        File usersFile = new File("users.dat");
+        if (usersFile.exists()) {
+            usersFile.delete();
         }
     }
 
     @Test
     void testAddUserStatements() {
-        // Test statement coverage for addUser method
+        // Create first user
         User user = new User();
         user.setUsername("testUser");
         user.setPassword("password123");
         
-        // First attempt should succeed as user doesn't exist
-        assertTrue(userStorage.addUser(user));
+        // First add should succeed
+        assertTrue(userStorage.addUser(user), "First user should be added successfully");
         
-        // Create another user with same username
+        // Verify user exists
+        assertNotNull(userStorage.getUserByUsername("testUser"), "User should exist after adding");
+        
+        // Try to add duplicate user
         User duplicateUser = new User();
         duplicateUser.setUsername("testUser");
         duplicateUser.setPassword("differentPassword");
         
-        // Second attempt should fail as user already exists
-        assertFalse(userStorage.addUser(duplicateUser));
+        // Second add should fail
+        assertFalse(userStorage.addUser(duplicateUser), "Duplicate user should not be added");
     }
-
 
     @Test
     void testValidateUserStatements() {
-        // Create and add a user
-        User user = new User();
-        user.setUsername("testUser");
-        String plainPassword = "password123";
-        
-        // Set password and add user - password will be encoded during add
-        user.setPassword(plainPassword);
-        userStorage.addUser(user);
-        
-        // First validation should work with plain text password against encoded stored password
-        assertTrue(userStorage.validateUser("testUser", plainPassword),
-                "First validation should succeed with correct password");
-        
-        // Second validation should still work
-        assertTrue(userStorage.validateUser("testUser", plainPassword),
-                "Second validation should still succeed");
-        
-        // Test invalid password
-        assertFalse(userStorage.validateUser("testUser", "wrongPassword"),
-                "Validation with wrong password should fail");
-        
-        // Test non-existent user
-        assertFalse(userStorage.validateUser("nonExistentUser", plainPassword),
-                "Validation with non-existent user should fail");
-    }
-
-    @Test
-    void testChangePasswordStatements() {
-        // Create and add a user
-        User user = new User();
-        user.setUsername("testUser");
-        String initialPassword = "password123";
-        user.setPassword(initialPassword);
-        userStorage.addUser(user);
-        
-        // Test changing password with correct old password
-        assertTrue(userStorage.changePassword("testUser", initialPassword, "newPassword123"),
-                "Password change should succeed with correct old password");
-        
-        // Test changing password again with the new password
-        assertTrue(userStorage.changePassword("testUser", "newPassword123", "newerPassword123"),
-                "Second password change should succeed with correct password");
-        
-        // Test with incorrect old password
-        assertFalse(userStorage.changePassword("testUser", "wrongPassword", "newPassword123"),
-                "Password change should fail with incorrect old password");
-        
-        // Test with non-existent user
-        assertFalse(userStorage.changePassword("nonExistentUser", initialPassword, "newPassword123"),
-                "Password change should fail for non-existent user");
-    }
-
-    @Test
-    void testGetUserByUsernameStatements() {
-        // Create and add a user
+        // Create and add user
         User user = new User();
         user.setUsername("testUser");
         user.setPassword("password123");
         userStorage.addUser(user);
+        
+        // Test initial validation (should handle plain text)
+        assertTrue(userStorage.validateUser("testUser", "password123"), 
+            "Initial validation should succeed");
+        
+        // Second validation (password should be encrypted now)
+        assertTrue(userStorage.validateUser("testUser", "password123"), 
+            "Second validation should succeed");
+        
+        // Test wrong password
+        assertFalse(userStorage.validateUser("testUser", "wrongPassword"), 
+            "Wrong password should fail");
+        
+        // Test non-existent user
+        assertFalse(userStorage.validateUser("nonExistentUser", "password123"), 
+            "Non-existent user should fail");
+    }
 
-        // Statement: Test retrieving existing user
-        assertNotNull(userStorage.getUserByUsername("testUser"));
+    @Test
+    void testChangePasswordStatements() {
+        // Create and add user
+        User user = new User();
+        user.setUsername("testUser");
+        user.setPassword("password123");
+        userStorage.addUser(user);
+        
+        // First password change
+        assertTrue(userStorage.changePassword("testUser", "password123", "newPassword123"),
+            "First password change should succeed");
+        
+        // Verify new password works
+        assertTrue(userStorage.validateUser("testUser", "newPassword123"),
+            "Should validate with new password");
+        
+        // Change password again
+        assertTrue(userStorage.changePassword("testUser", "newPassword123", "newerPassword123"),
+            "Second password change should succeed");
+        
+        // Test with wrong password
+        assertFalse(userStorage.changePassword("testUser", "wrongPassword", "newPassword123"),
+            "Wrong password should fail");
+        
+        // Test with non-existent user
+        assertFalse(userStorage.changePassword("nonExistentUser", "password123", "newPassword123"),
+            "Non-existent user should fail");
+    }
 
-        // Statement: Test retrieving non-existent user
-        assertNull(userStorage.getUserByUsername("nonExistentUser"));
+    @Test
+    void testGetUserByUsernameStatements() {
+        // Create and add user
+        User user = new User();
+        user.setUsername("testUser");
+        user.setPassword("password123");
+        userStorage.addUser(user);
+        
+        // Test getting existing user
+        User foundUser = userStorage.getUserByUsername("testUser");
+        assertNotNull(foundUser, "Should find existing user");
+        assertEquals("testUser", foundUser.getUsername(), "Username should match");
+        
+        // Test getting non-existent user
+        assertNull(userStorage.getUserByUsername("nonExistentUser"),
+            "Should return null for non-existent user");
     }
 }

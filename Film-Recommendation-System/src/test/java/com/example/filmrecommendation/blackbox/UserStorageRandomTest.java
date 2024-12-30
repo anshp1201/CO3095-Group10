@@ -24,11 +24,12 @@ public class UserStorageRandomTest {
     void setUp() {
         userStorage = new UserStorage();
         random = new Random();
-        // Create and inject the password encoder
+        
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         ReflectionTestUtils.setField(userStorage, "passwordEncoder", passwordEncoder);
     }
 
+    // Tests random user registration with usernames and passwords of varying lengths.
     @ParameterizedTest
     @ValueSource(ints = {8, 16, 32, 64})
     void testRandomUserRegistration(int length) {
@@ -49,6 +50,7 @@ public class UserStorageRandomTest {
         assertEquals(username, storedUser.getUsername());
     }
 
+    // Tests random password changes for a user.
     @Test
     void testRandomPasswordChanges() {
         // Create initial user
@@ -68,6 +70,7 @@ public class UserStorageRandomTest {
         }
     }
 
+ // Tests random user validation with valid and invalid combinations.
     @Test
     void testRandomUserValidation() {
         // Create a set of random users
@@ -101,6 +104,7 @@ public class UserStorageRandomTest {
         }
     }
 
+    // Generates a random alphanumeric string of the specified length.
     private String generateRandomString(int length) {
         StringBuilder sb = new StringBuilder();
         String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
