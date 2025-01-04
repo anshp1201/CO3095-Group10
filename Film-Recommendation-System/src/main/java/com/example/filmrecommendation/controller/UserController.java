@@ -37,6 +37,10 @@ public class UserController {
     //Handles user registration
     @PostMapping("/register")
     public String registerUser(User user, RedirectAttributes redirectAttributes) {
+    	if (user.getPassword().length() < 8) {
+            redirectAttributes.addFlashAttribute("error", "Password must be at least 8 characters long!");
+            return "redirect:/register";
+        }
         if (userStorage.addUser(user)) {
             redirectAttributes.addFlashAttribute("success", "Registration successful!");
             return "redirect:/login";

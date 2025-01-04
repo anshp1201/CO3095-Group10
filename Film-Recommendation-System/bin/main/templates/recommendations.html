@@ -1,19 +1,63 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Recommendations</title>
+    <title>Recommendations</title>
+    <link rel="stylesheet" href="/css/collection.css">
 </head>
 <body>
-	<h1>Welcome, <span th:text="${user.username}"></span>!</h1>
-	<h2>Your Recommendations:</h2>
-	<ul>
-		<li th:each="film : ${recommendations}"
-			<strong th:text="${film.title}"></strong>
-			<p>Genre: <span th:text="${film.genre}"</span></p>
-			<p>Director: <span th:text="${film.director}"</span></p>
-			<p>Average Rating: <span th:text="{film.averageRating}"</span></p>
-		</li>
-	</ul>
+    <h1>Welcome, <span th:text="${user.username}">!</span></h1>
+    <input type="hidden" id="username" th:value="${user.username}" />
+    <button onclick="showModal()">Create New Collection</button>
+    
+    <h2>Your Recommendations:</h2>
+    <ul>
+        <li th:each="film : ${recommendations}">
+            <strong th:text="${film.title}"></strong>
+            <p>Genre: <span th:text="${film.genre}"></span></p>
+            <p>Director: <span th:text="${film.director}"></span></p>
+            <p>Average Rating: <span th:text="${film.averageRating}"></span></p>
+            <div class="collection-actions">
+                <form onsubmit="return addToCollection(event, this)">
+                    <select name="collectionName" required>
+                        <option value="">Select Collection...</option>
+                        <option th:each="collection : ${collections}" 
+                                th:value="${collection.collectionName}" 
+                                th:text="${collection.collectionName}">
+                        </option>
+                    </select>
+                    <input type="hidden" name="movieTitle" th:value="${film.title}" />
+                    <button type="submit">Add to Collection</button>             
+                    <div class="error-message"></div>
+                    <div class="success-message"></div>
+                </form>
+            </div>
+        </li>
+    </ul>
+
+    <h2>View Collection Content:</h2>
+    <select id="viewCollectionSelect">
+        <option value="">Select Collection...</option>
+        <option th:each="collection : ${collections}" 
+                th:value="${collection.collectionName}" 
+                th:text="${collection.collectionName}">
+        </option>
+    </select>
+    <button onclick="viewCollection()">View Collection</button>
+    <div id="collectionContent"></div>
+
+    <div id="newCollectionModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Create New Collection</h3>
+            <form id="createCollectionForm" onsubmit="return createCollection(event)">
+                <input type="text" name="collectionName" placeholder="Enter collection name" required>
+                <button type="submit">Create</button>
+                <div class="error-message"></div>
+                <div class="success-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/collection.js"></script>
 </body>
 </html>
-					

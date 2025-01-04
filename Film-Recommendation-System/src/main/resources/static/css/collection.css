@@ -1,0 +1,40 @@
+@charset "ISO-8859-1";
+.collection-actions {
+    margin-top: 10px;
+}
+
+#newCollectionModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    margin: 15% auto;
+    padding: 20px;
+    width: 300px;
+    border-radius: 5px;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+}
+
+.error-message {
+    color: red;
+    display: none;
+    margin: 5px 0;
+}
+
+.success-message {
+    color: green;
+    display: none;
+    margin: 5px 0;
+}

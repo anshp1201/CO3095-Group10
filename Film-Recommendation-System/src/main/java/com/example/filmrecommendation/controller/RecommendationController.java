@@ -7,8 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.example.filmrecommendation.model.Collection;
 import com.example.filmrecommendation.model.Film;
 import com.example.filmrecommendation.model.User;
+import com.example.filmrecommendation.service.CollectionStorage;
 import com.example.filmrecommendation.service.FilmStorage;
 import com.example.filmrecommendation.service.UserStorage;
 
@@ -25,6 +27,9 @@ public class RecommendationController {
 	@Autowired
 	private UserStorage userStorage;
 	
+	@Autowired
+	private CollectionStorage collectionStorage;
+	
 	@GetMapping("/films")
     public String getAllFilms(HttpSession session, Model model) {
         List<Film> films = filmStorage.getAllFilms();
@@ -36,6 +41,7 @@ public class RecommendationController {
 	public String getRecommendations(HttpSession session, Model model) {
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		if (loggedInUser == null) {
+			return "redirect:/login";
 			
 		}
 		
@@ -44,8 +50,11 @@ public class RecommendationController {
 		
 		List<Film> recommendations = filmStorage.getRecommendations(favoriteGenre, viewedFilms);
 		
+		List<Collection> userCollections = collectionStorage.getUserCollections(loggedInUser.getUsername());
+		
 		model.addAttribute("user", loggedInUser);
 		model.addAttribute("recommendations", recommendations);
+		model.addAttribute("collections", userCollections);
 		
 		return "recommendations";
 		

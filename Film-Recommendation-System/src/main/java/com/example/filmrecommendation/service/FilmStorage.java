@@ -38,6 +38,14 @@ public class FilmStorage {
 		return films;
 	}
 	
+	public boolean hasFilm(String movieTitle) {
+	    System.out.println("Checking if film exists: " + movieTitle);
+	    boolean exists = films.stream()
+	            .anyMatch(film -> film.getTitle().equals(movieTitle));
+	    System.out.println("Film exists: " + exists);
+	    return exists;
+	}
+	
 	public List<Film> getRecommendations(String favoriteGenre, List<String> viewedFilms) {
 	    return films.stream()
 	            .filter(film -> film.getGenre().equalsIgnoreCase(favoriteGenre) && !viewedFilms.contains(film.getTitle()))

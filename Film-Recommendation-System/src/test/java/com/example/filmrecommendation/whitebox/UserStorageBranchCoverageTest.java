@@ -95,9 +95,6 @@ public class UserStorageBranchCoverageTest {
         assertTrue(storedUser.getPassword().startsWith("$2a$"), 
                 "Password should be encoded after adding user");
         
-//        // Try to change password using the original encoded password
-//        assertTrue(userStorage.changePassword("testUser", initialPassword, "newPassword"),
-//                "Should succeed with correct initial password");
 
         // Branch 3: Test with incorrect password
         assertFalse(userStorage.changePassword("testUser", "wrongOldPassword", "newPassword123"),
@@ -110,9 +107,6 @@ public class UserStorageBranchCoverageTest {
         secondUser.setPassword(passwordEncoder.encode(secondInitialPassword));
         userStorage.addUser(secondUser);
 
-//        // Branch 4: Test second user with correct password
-//        assertTrue(userStorage.changePassword("testUser2", secondInitialPassword, "newPassword456"),
-//                "Should succeed with correct password for second user");
 
         // Branch 5: Test second user with incorrect password
         assertFalse(userStorage.changePassword("testUser2", "wrongPassword", "newPassword789"),
