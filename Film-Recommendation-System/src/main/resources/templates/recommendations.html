@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/css/collection.css">
 </head>
 <body>
+
     <h1>Welcome, <span th:text="${user.username}">!</span></h1>
     <input type="hidden" id="username" th:value="${user.username}" />
     <button onclick="showModal()">Create New Collection</button>
@@ -16,6 +17,7 @@
             <p>Genre: <span th:text="${film.genre}"></span></p>
             <p>Director: <span th:text="${film.director}"></span></p>
             <p>Average Rating: <span th:text="${film.averageRating}"></span></p>
+            <a th:href="@{'/share?FilmID=' + ${film.filmid}}">Share This!</a>
             <div class="collection-actions">
                 <form onsubmit="return addToCollection(event, this)">
                     <select name="collectionName" required>
@@ -61,3 +63,4 @@
     <script src="/js/collection.js"></script>
 </body>
 </html>
+
