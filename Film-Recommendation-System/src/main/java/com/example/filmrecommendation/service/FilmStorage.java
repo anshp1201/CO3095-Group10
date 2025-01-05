@@ -16,6 +16,7 @@ public class FilmStorage {
 	public FilmStorage() {
 		films = new ArrayList<>();
 		
+
 		films.add(new Film("1","Inception", "Sci-Fi", "Christopher Nolan", 9.0));
 		films.add(new Film("2","The Dark Knight", "Action", "Christopher Nolan", 9.0));
         films.add(new Film("3","Titanic", "Romance", "James Cameron", 7.9));
@@ -37,12 +38,22 @@ public class FilmStorage {
 		return films;
 	}
 	
+	public boolean hasFilm(String movieTitle) {
+	    System.out.println("Checking if film exists: " + movieTitle);
+	    boolean exists = films.stream()
+	            .anyMatch(film -> film.getTitle().equals(movieTitle));
+	    System.out.println("Film exists: " + exists);
+	    return exists;
+	}
+	
 	public List<Film> getRecommendations(String favoriteGenre, List<String> viewedFilms) {
 	    return films.stream()
 	            .filter(film -> film.getGenre().equalsIgnoreCase(favoriteGenre) && !viewedFilms.contains(film.getTitle()))
 	            .sorted((f1, f2) -> Double.compare(f2.getAverageRating(), f1.getAverageRating()))
 	            .collect(Collectors.toList());
 	}
+  
+
 	
 	public Film getFilm(String FilmID) {
 		
@@ -59,6 +70,13 @@ public class FilmStorage {
 		return null;
 		
 	}
+
+	public List<Film> getMoviesByGenre(String genre) {
+        return films.stream()
+                .filter(film -> film.getGenre().equalsIgnoreCase(genre))
+                .collect(Collectors.toList());
+    }
+
 
 
 }

@@ -16,23 +16,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class UserController {
-
+	
+    //Storage for user information
     @Autowired
     private UserStorage userStorage;
 
+    //redirect to the registration page
     @GetMapping("/")
     public String home() {
         return "redirect:/register";
     }
 
+    //Display the registration page
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
         return "register";
     }
 
+    //Handles user registration
     @PostMapping("/register")
     public String registerUser(User user, RedirectAttributes redirectAttributes) {
+    	if (user.getPassword().length() < 8) {
+            redirectAttributes.addFlashAttribute("error", "Password must be at least 8 characters long!");
+            return "redirect:/register";
+        }
         if (userStorage.addUser(user)) {
             redirectAttributes.addFlashAttribute("success", "Registration successful!");
             return "redirect:/login";
@@ -42,11 +50,13 @@ public class UserController {
         }
     }
 
+    //Display the login form
     @GetMapping("/login")
     public String showLoginForm() {
         return "login";
     }
     
+  //Handles user login
     @PostMapping("/login")
     public String login(@RequestParam("username") String username, 
                        @RequestParam("password") String password,
@@ -62,6 +72,7 @@ public class UserController {
         }
     }
 
+    //Displays the user's profile
     @GetMapping("/profile")
     public String showProfile(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -72,12 +83,15 @@ public class UserController {
         return "profile";
     }
 
+    
+    // Handles user logout 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
     }
     
+    //Updates user's profile 
     @PostMapping("/updateProfile")
     public String updateProfile(@ModelAttribute User user, HttpSession session, RedirectAttributes redirectAttributes) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -91,6 +105,7 @@ public class UserController {
         return "redirect:/profile";
     }
 
+    //Handles password Change
     @PostMapping("/changePassword")
     public String changePassword(
     		@RequestParam(name = "oldPassword") String oldPassword,
