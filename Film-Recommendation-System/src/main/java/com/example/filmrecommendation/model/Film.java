@@ -11,6 +11,7 @@ public class Film implements Serializable{
 	private String genre;
 	private String director;
 	private double averageRating;
+	private int viewCount; 
 	
 	
 	public Film() {}
@@ -22,7 +23,19 @@ public class Film implements Serializable{
 		this.genre = genre;
 		this.director = director;
 		this.averageRating = averageRating;
+		this.viewCount = 0;  
 	}
+
+
+	public int getViewCount() {
+		return viewCount;
+    }
+
+        public void incrementViewCount() {
+		this.viewCount++;
+    }
+
+	
 	
 	public String getFilmid() {
 		return filmid;
