@@ -30,6 +30,7 @@ public class DashboardController {
         model.addAttribute("user", loggedInUser);
         model.addAttribute("films", filmStorage.getAllFilms());
         model.addAttribute("genres", genres);
+        model.addAttribute("trendingFilms", filmStorage.getTrendingFilms());
         
         return "dashboard";
     }
