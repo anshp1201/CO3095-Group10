@@ -33,6 +33,22 @@ public class FilmStorage {
         films.add(new Film("14","One Flew Over the Cuckoo's Nest", "Drama", "Milos Forman", 8.7));
         
 	}
+
+
+	public List<Film> getTrendingFilms() {
+		return films.stream()
+			.sorted((f1, f2) -> Integer.compare(f2.getViewCount(), f1.getViewCount()))
+                        .limit(5)  // Get top 5 trending films
+                        .collect(Collectors.toList());
+    }
+
+        public void incrementFilmViewCount(String title) {
+		films.stream()
+			.filter(film -> film.getTitle().equals(title))
+			.findFirst()
+			.ifPresent(Film::incrementViewCount);
+    }
+
 	
 	public List<Film> getAllFilms() {
 		return films;
