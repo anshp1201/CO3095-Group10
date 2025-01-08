@@ -219,6 +219,44 @@
         .genre-list li a:hover {
             color: #0056b3;
         }
+	    .trending-section {
+		    margin-top: 30px;
+		    padding: 20px;
+		    background: #fff;
+		    border-radius: 8px;
+		    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+	    .trending-section h2 {
+		    color: #007bff;
+		    margin-bottom: 20px;
+}
+	    .trending-films {
+		    display: grid;
+		    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		    gap: 20px;
+}
+	    .trending-film-card {
+		    padding: 15px;
+		    background: #f8f9fa;
+		    border-radius: 8px;
+		    border-left: 4px solid #007bff;
+}
+	    .trending-film-card h3 {
+		    color: #333;
+		    margin-bottom: 10px;
+}
+	    .view-button {
+		    background-color: #007bff;
+		    color: white;
+		    border: none;
+		    padding: 8px 16px;
+		    border-radius: 4px;
+		    cursor: pointer;
+		    margin-top: 10px;
+}
+	    .view-button:hover {
+		    background-color: #0056b3;
+}
     </style>
 </head>
 <body>
@@ -250,6 +288,21 @@
             </ul>
         </div>
     </div>
+
+
+	<div class="trending-section">
+		<h2>Trending Films</h2>
+		<div class="trending-films">
+			<div th:each="film : ${trendingFilms}" class="trending-film-card">
+				<h3 th:text="${film.title}"></h3>
+				<p>Director: <span th:text="${film.director}"></span></p>
+				<p>Genre: <span th:text="${film.genre}"></span></p>
+				<p>Rating: <span th:text="${film.averageRating}"></span></p>
+				<p>Views: <span th:text="${film.viewCount}"></span></p>
+				<button th:onclick="'trackView(\'' + ${film.title} + '\')'" class="view-button">View Film</button>
+			</div>
+		</div>
+	</div>
 	
 	
 	<div class="reviews-section">
@@ -380,6 +433,22 @@
 	            });
 	        }
 	        /*]]>*/
+
+
+		    function trackView(title) {
+			    fetch(`/api/films/${encodeURIComponent(title)}/view`, {
+				    method: 'POST',
+				    headers: {
+					    'Content-Type': 'application/json'
+				    }
+    })
+				    .then(response => {
+					    if (response.ok) {
+						    window.location.reload();
+					    }
+    })
+				    .catch(error => console.error('Error:', error));
+}
 	    </script>
 </body>
 </html>
