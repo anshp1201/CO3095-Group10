@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Search Results</title>
+	<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Search Results for "<span th:text="${query}"></span>"</h1>
+        <ul class="film-list">
+            <li th:each="film : ${films}" class="film-item">
+                <h2 th:text="${film.title}"></h2>
+                <p><strong>Genre:</strong> <span th:text="${film.genre}"></span></p>
+                <p><strong>Director:</strong> <span th:text="${film.director}"></span></p>
+                <p><strong>Actors:</strong> <span th:text="${film.actors}"></span></p>
+                <p><strong>Rating:</strong> <span th:text="${film.averageRating}"></span></p>
+            </li>
+        </ul>
+        <a href="/dashboard" class="btn-back">Back to Dashboard</a>
+    </div>
+</body>
+</html>
