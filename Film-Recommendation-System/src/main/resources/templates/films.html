@@ -2,31 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Film List</title>
+	<link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <h1>Available Films</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Genre</th>
-                <th>Director</th>
-                <th>Average Rating</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="film : ${films}">
-                <td th:text="${film.title}"></td>
-                <td th:text="${film.genre}"></td>
-                <td th:text="${film.director}"></td>
-                <td th:text="${film.averageRating}"></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Back to Dashboard Button -->
-    <form action="/dashboard" method="get">
-        <button type="submit">Back to Dashboard</button>
-    </form>
+	<div class="container">
+		<h1>Available Films</h1>
+	    <table class="film-table">
+	        <thead>
+	            <tr>
+	                <th>Title</th>
+	                <th>Genre</th>
+	                <th>Director</th>
+	                <th>Average Rating</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	            <tr th:each="film : ${films}">
+	                <td th:text="${film.title}"></td>
+	                <td th:text="${film.genre}"></td>
+	                <td th:text="${film.director}"></td>
+	                <td th:text="${film.averageRating}"></td>
+	            </tr>
+	        </tbody>
+	    </table>
+	
+	    <!-- Back to Dashboard Button -->
+		<form action="/dashboard" method="get" class="back-to-dashboard">
+			<button type="submit" class="btn-primary">Back to Dashboard</button>
+		</form>
+	</div>
 </body>
 </html>
