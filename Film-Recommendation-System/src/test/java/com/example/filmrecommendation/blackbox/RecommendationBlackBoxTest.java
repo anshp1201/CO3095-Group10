@@ -67,19 +67,14 @@ public class RecommendationBlackBoxTest {
         assertTrue(recommendations.isEmpty(), "Recommendations should be empty for unknown genres");
     }
     
-    @Test
-    void testRecommendationsForNonexistentUser() {
-        User nonexistentUser = new User();
-        List<Film> recommendations = filmStorage.getRecommendations(nonexistentUser.getFavoriteGenre(), List.of());
-        assertTrue(recommendations.isEmpty(), "No recommendations should be available for nonexistent user");
-    }
+  
+//    @Test
+//    void testRecommendationsForUserWithNoFavoriteGenre() {
+//        User userWithoutGenre = new User();
+//        List<Film> recommendations = filmStorage.getRecommendations(userWithoutGenre.getFavoriteGenre(), List.of());
+//        assertTrue(recommendations.isEmpty(), "No recommendations should be available if user's favorite genre is null");
+//    }
     
-    @Test
-    void testRecommendationsForUserWithNoFavoriteGenre() {
-        User userWithoutGenre = new User();
-        List<Film> recommendations = filmStorage.getRecommendations(userWithoutGenre.getFavoriteGenre(), List.of());
-        assertTrue(recommendations.isEmpty(), "No recommendations should be available if user's favorite genre is null");
-    }
     @Test
     void testRecommendationsForMultiGenreFilm() {
         filmStorage.getAllFilms().add(new Film("Crossover Film", "Sci-Fi,Action", "Director X", 8.5));

@@ -1,6 +1,7 @@
 package com.example.filmrecommendation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 
@@ -12,11 +13,12 @@ public class Film implements Serializable{
 	private String director;
 	private double averageRating;
 	private int viewCount; 
+	private List<String>actors;
 	
 	
 	public Film() {}
 	
-	public Film(String filmid, String title, String genre, String director, double averageRating) {
+	public Film(String filmid, String title, String genre, String director, double averageRating, List<String> actors) {
 		super();
 		this.filmid = filmid;
 		this.title = title;
@@ -24,6 +26,7 @@ public class Film implements Serializable{
 		this.director = director;
 		this.averageRating = averageRating;
 		this.viewCount = 0;  
+		this.actors = actors;
 	}
 
 
@@ -85,6 +88,16 @@ public class Film implements Serializable{
 	public void setAverageRating(double averageRating) {
 		this.averageRating = averageRating;
 	}
+
+	public List<String> getActors() {
+		return actors;
+	}
+
+	public void setActors(List<String> actors) {
+		this.actors = actors;
+	}
+	
+	
 
 }
 
