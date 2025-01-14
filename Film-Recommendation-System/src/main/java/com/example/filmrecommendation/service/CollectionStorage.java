@@ -1,132 +1,92 @@
-package com.example.filmrecommendation.service;
+package com.example.filmrecommendation.controller;
 
 import com.example.filmrecommendation.model.Collection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.ArrayList;
+import com.example.filmrecommendation.service.CollectionStorage;
+import com.example.filmrecommendation.service.NotificationStorage;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
-public class CollectionStorage {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-    private static final String FILE_PATH = "collections.dat";
-    private List<Collection> collections;
-
+@RestController
+@RequestMapping("/api/collections")
+public class CollectionController {
+	
     @Autowired
-    private FilmStorage filmStorage;
+    private CollectionStorage collectionStorage;
+    
+    @Autowired 
+    private NotificationStorage notificationStorage;
+    
+    
+    //End point used to Create a new Collection for a specific user.
+    @PostMapping("/add")
+    public ResponseEntity<String> createCollection(
+            @RequestParam("username") String username,
+            @RequestParam("collectionName") String collectionName) {
+        try {
+            collectionStorage.createCollection(username, collectionName);
 
-    //Load existing collections from a file or create a new list if file doesn't exists.
-    public CollectionStorage() {
-        collections = loadCollections();
-        if (collections == null) {
-            collections = new ArrayList<>();
-            saveCollections();
-        }
-    }
-
-    //Method to load collections from the file. 
-    @SuppressWarnings("unchecked")
-    private List<Collection> loadCollections() {
-        File file = new File(FILE_PATH);
-        if (!file.exists()) {
-            return new ArrayList<>();
-        }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            return (List<Collection>) ois.readObject();
-        } catch (FileNotFoundException e) {
-            return new ArrayList<>();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            notificationStorage.addNotification("Created collection :"+ collectionName, "Better get to adding those movies to your personal collection");
+            
+            return ResponseEntity.ok("Collection created successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to create collection: " + e.getMessage());
         }
     }
     
-    //Method to save collections to a file to ensure thread safety.
-    private synchronized void saveCollections() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
-            oos.writeObject(collections);
-        } catch (IOException e) {
+    
+    //End point for adding movies to a specific collection for a user.
+    @PostMapping("/{username}/{collectionName}/add-movie")
+    public ResponseEntity<String> addMovieToCollection(
+            @PathVariable("username") String username,
+            @PathVariable("collectionName") String collectionName,
+            @RequestParam("movieTitle") String movieTitle) {
+
+        System.out.println("Received request to add movie:");
+        System.out.println("Username: " + username);
+        System.out.println("Collection: " + collectionName);
+        System.out.println("Movie: " + movieTitle);
+
+        try {
+            boolean added = collectionStorage.addMovie(username, collectionName, movieTitle);
+
+            if (!added) {
+                String message = "Failed to add movie. Either the collection doesn't exist, the movie isn't found, or it already exists in the collection.";
+                System.out.println(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            String message = "Movie added to collection successfully.";
+            System.out.println(message);
+            notificationStorage.addNotification(movieTitle + " added to "+ collectionName, " ");
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            String message = "Failed to add movie: " + e.getMessage();
+            System.out.println("Error: " + message);
             e.printStackTrace();
-            throw new RuntimeException("Failed to save collections", e);
+            return ResponseEntity.internalServerError().body(message);
         }
     }
 
-    //Method to create a new collection for a user. 
-    public synchronized Collection createCollection(String username, String collectionName) {
-        if (username == null || username.trim().isEmpty() ||
-            collectionName == null || collectionName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username and collection name cannot be empty");
-        }
-
-        boolean exists = collections.stream()
-                .anyMatch(c -> c.getUsername().equals(username) && c.getCollectionName().equals(collectionName));
-
-        if (exists) {
-            throw new IllegalStateException("Collection already exists");
-        }
-
-        Collection collection = new Collection(username, collectionName);
-        collections.add(collection);
-        saveCollections();
-        return collection;
-    }
-
-    //Method to find and return a specific collection by username and collection name.
-    public Collection findCollection(String username, String collectionName) {
-        return collections.stream()
-                .filter(c -> c.getUsername().equals(username) && c.getCollectionName().equals(collectionName))
-                .findFirst()
-                .orElse(null);
-    }
-
-    //Method to add a movie to a specific collection for a user.
-    public synchronized boolean addMovie(String username, String collectionName, String movieTitle) {
-        System.out.println("Attempting to add movie: '" + movieTitle + "' to collection: '" +
-                collectionName + "' for user: '" + username + "'");
-
-        //Find the collection
-        Collection collection = findCollection(username, collectionName);
+    
+    //End point to retrieve a specific collection for a user by username and collection name.
+    @GetMapping("/{username}/{collectionName}")
+    public ResponseEntity<Collection> getCollection(
+            @PathVariable("username") String username,
+            @PathVariable("collectionName") String collectionName) {
+        
+        Collection collection = collectionStorage.findCollection(username, collectionName);
         if (collection == null) {
-            System.out.println("Collection not found!");
-            return false;
+            return ResponseEntity.notFound().build();
         }
-
-        //Check if the movie exists in filmStorage
-        if (!filmStorage.hasFilm(movieTitle)) {
-            System.out.println("Movie not found in film storage: " + movieTitle);
-            return false;
-        }
-
-        //Check if the movie already exists in the collection
-        if (collection.getMovieTitles().contains(movieTitle)) {
-            System.out.println("Movie already exists in the collection: " + movieTitle);
-            return false;
-        }
-
-        //Add the movie to the collection
-        boolean added = collection.getMovieTitles().add(movieTitle);
-        if (added) {
-            System.out.println("Movie added successfully");
-            System.out.println("Current collection contents: " + collection.getMovieTitles());
-            saveCollections();
-        }
-        return added;
-    }
-
-    //Method to retrieve all collections for a specific user.
-    public List<Collection> getUserCollections(String username) {
-        return collections.stream()
-                .filter(c -> c.getUsername().equals(username))
-                .collect(Collectors.toList());
-    }
-
-    //Method to check if a movie exists in the film storage.
-    private boolean movieExists(String movieTitle) {
-        return filmStorage.getAllFilms().stream()
-                .anyMatch(film -> film.getTitle().equals(movieTitle));
+        return ResponseEntity.ok(collection);
     }
 }
