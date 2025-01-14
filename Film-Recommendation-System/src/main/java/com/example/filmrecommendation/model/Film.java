@@ -12,20 +12,31 @@ public class Film implements Serializable{
 	private String genre;
 	private String director;
 	private double averageRating;
+	private int viewCount; 
 	private List<String>actors;
 	
 	
 	public Film() {}
 	
-	public Film(String filmid, String title, String genre, String director, double averageRating, List<String> actors) {
+	public Film(String filmid, String title, String genre, String director, double averageRating, int viewCount,  List<String> actors) {
 		super();
 		this.filmid = filmid;
 		this.title = title;
 		this.genre = genre;
 		this.director = director;
 		this.averageRating = averageRating;
+		this.viewCount = 0;
 		this.actors = actors;
 	}
+	
+	public int getViewCount() {
+		return viewCount;
+    }
+	
+	 public void incrementViewCount() {
+	        this.viewCount++;
+	        }
+       
 	
 	public String getFilmid() {
 		return filmid;

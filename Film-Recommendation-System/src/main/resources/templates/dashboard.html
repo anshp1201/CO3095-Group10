@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dashboard - Film Recommendation System</title>
-	<link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <div class="profile-container">
         <div class="profile-header">
             <h1>Dashboard</h1>
             <div class="nav-buttons">
-                <a href="/profile">Profile</a>
+                <a href="/profile" th:if="${user != null}" th:text="${user.username}">Profile</a>
                 <a href="/logout">Logout</a>
             </div>
         </div>
@@ -26,151 +26,191 @@
         <div class="genre-list">
             <h2>Genre Preferences</h2>
             <ul>
-                <li><a href="/genres/action">Action</a></li>
-                <li><a href="/genres/romance">Romance</a></li>
-                <li><a href="/genres/sci-fi">Sci-Fi</a></li>
-                <li><a href="/genres/comedy">Comedy</a></li>
+                <li th:each="genre : ${genres}">
+                    <a th:href="@{'/genres/' + ${genre.toLowerCase()}}" th:text="${genre}">Genre</a>
+                </li>
             </ul>
         </div>
     </div>
-	
-	<form action="/search" method="get" class="search-form">
-	    <input type="text" name="query" placeholder="Search by title, director, or genre" required>
-	    <button type="submit">Search</button>
-	</form>
+    
+    <div class="trending-section">
+        <h2>Trending Films</h2>
+        <div class="trending-films">
+            <div th:if="${trendingFilms != null && !trendingFilms.empty}">
+                <div th:each="film : ${trendingFilms}" class="trending-film-card">
+                    <h3 th:text="${film.title}">Film Title</h3>
+                    <p>Director: <span th:text="${film.director}">Director Name</span></p>
+                    <p>Genre: <span th:text="${film.genre}">Genre</span></p>
+                    <p>Rating: <span th:text="${film.averageRating}">0.0</span></p>
+                    <p>Views: <span th:text="${film.viewCount}">0</span></p>
+                    <button th:attr="onclick=|trackView('${film.title}')|" class="view-button">View Film</button>
+                </div>
+            </div>
+            <div th:if="${trendingFilms == null || trendingFilms.empty}" class="no-films">
+                <p>No trending films available</p>
+            </div>
+        </div>
+    </div>
+    
+    <form action="/search" method="get" class="search-form">
+        <input type="text" name="query" placeholder="Search by title, director, or genre" required>
+        <button type="submit">Search</button>
+    </form>
 
-	
-	
-	<div class="reviews-section">
-	            <h2>Film Reviews</h2>
-	            <div class="review-form">
-	                <h3>Write a Review</h3>
-	                <form id="reviewForm">
-	                    <div class="form-group">
-	                        <label for="filmSelect">Select Film</label>
-	                        <select id="filmSelect" required>
-	                            <option value="">Choose a film...</option>
-	                            <option th:each="film : ${films}" th:value="${film.title}" th:text="${film.title}"></option>
-	                        </select>
-	                    </div>
-	                    
-	                    <div class="form-group">
-	                        <label for="rating">Rating</label>
-	                        <select id="rating" required>
-	                            <option value="5">5 Stars</option>
-	                            <option value="4">4 Stars</option>
-	                            <option value="3">3 Stars</option>
-	                            <option value="2">2 Stars</option>
-	                            <option value="1">1 Star</option>
-	                        </select>
-	                    </div>
+    <div class="reviews-section">
+        <h2>Film Reviews</h2>
+        <div class="review-form">
+            <h3>Write a Review</h3>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="filmSelect">Select Film</label>
+                    <select id="filmSelect" required>
+                        <option value="">Choose a film...</option>
+                        <option th:each="film : ${films}" 
+                                th:value="${film.title}" 
+                                th:text="${film.title}">Film Title</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rating">Rating</label>
+                    <select id="rating" required>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
 
-	                    <div class="form-group">
-	                        <label for="reviewContent">Your Review</label>
-	                        <textarea id="reviewContent" required placeholder="Write your review here..."></textarea>
-	                    </div>
+                <div class="form-group">
+                    <label for="reviewContent">Your Review</label>
+                    <textarea id="reviewContent" required placeholder="Write your review here..."></textarea>
+                </div>
 
-	                    <button type="submit" class="submit-review">Submit Review</button>
-	                </form>
-	            </div>
+                <button type="submit" class="submit-review">Submit Review</button>
+            </form>
+        </div>
 
-	            <div class="reviews-list" id="reviewsList">
-	                <!-- Reviews will be loaded here dynamically -->
-	            </div>
-	        </div>
-	    </div>
+        <div class="reviews-list" id="reviewsList">
+            <!-- Reviews will be loaded here dynamically -->
+        </div>
+    </div>
 
-	    <script th:inline="javascript">
-	        /*<![CDATA[*/
-	        // Get the logged-in username from Thymeleaf
-			const username = /*[[${user.username}]]*/ 'user';
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const username = /*[[${user != null ? user.username : 'guest'}]]*/ 'guest';
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const reviewForm = document.getElementById('reviewForm');
+            const filmSelect = document.getElementById('filmSelect');
+            
+            if (reviewForm && filmSelect) {
+                filmSelect.addEventListener('change', loadReviews);
+                reviewForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    submitReview();
+                });
 
+                if (filmSelect.value) {
+                    loadReviews();
+                }
+            }
+        });
 
-	        document.addEventListener('DOMContentLoaded', function() {
-	            const reviewForm = document.getElementById('reviewForm');
-	            const filmSelect = document.getElementById('filmSelect');
-	            
-	            // Load reviews when a film is selected
-	            filmSelect.addEventListener('change', loadReviews);
-	            
-	            // Handle review submission
-	            reviewForm.addEventListener('submit', function(e) {
-	                e.preventDefault();
-	                submitReview();
-	            });
+        function loadReviews() {
+            const filmSelect = document.getElementById('filmSelect');
+            if (!filmSelect) return;
+            
+            const filmTitle = filmSelect.value;
+            if (!filmTitle) return;
 
-	            // Initial load of reviews if a film is selected
-	            if (filmSelect.value) {
-	                loadReviews();
-	            }
-	        });
+            fetch(`/api/reviews/film/${encodeURIComponent(filmTitle)}`)
+                .then(response => response.json())
+                .then(reviews => {
+                    displayReviews(reviews);
+                })
+                .catch(error => {
+                    console.error('Error loading reviews:', error);
+                });
+        }
 
-	        function loadReviews() {
-	            const filmTitle = document.getElementById('filmSelect').value;
-	            if (!filmTitle) return;
+        function displayReviews(reviews) {
+            const reviewsList = document.getElementById('reviewsList');
+            if (!reviewsList) return;
+            
+            reviewsList.innerHTML = '';
 
-	            fetch(`/api/reviews/film/${encodeURIComponent(filmTitle)}`)
-	                .then(response => response.json())
-	                .then(reviews => {
-	                    displayReviews(reviews);
-	                })
-	                .catch(error => {
-	                    console.error('Error loading reviews:', error);
-	                });
-	        }
+            reviews.forEach(review => {
+                const reviewElement = document.createElement('div');
+                reviewElement.className = 'review-item';
+                reviewElement.innerHTML = `
+                    <div class="review-header">
+                        <strong>${review.username}</strong>
+                        <span class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</span>
+                    </div>
+                    <div class="review-content">${review.content}</div>
+                    <div class="review-meta">Posted on ${new Date(review.createdAt).toLocaleDateString()}</div>
+                `;
+                reviewsList.appendChild(reviewElement);
+            });
+        }
 
-	        function displayReviews(reviews) {
-	            const reviewsList = document.getElementById('reviewsList');
-	            reviewsList.innerHTML = '';
+        function submitReview() {
+            const filmSelect = document.getElementById('filmSelect');
+            const reviewContent = document.getElementById('reviewContent');
+            const rating = document.getElementById('rating');
+            
+            if (!filmSelect || !reviewContent || !rating) return;
 
-	            reviews.forEach(review => {
-	                const reviewElement = document.createElement('div');
-	                reviewElement.className = 'review-item';
-	                reviewElement.innerHTML = `
-	                    <div class="review-header">
-	                        <strong>${review.username}</strong>
-	                        <span class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</span>
-	                    </div>
-	                    <div class="review-content">${review.content}</div>
-	                    <div class="review-meta">Posted on ${new Date(review.createdAt).toLocaleDateString()}</div>
-	                `;
-	                reviewsList.appendChild(reviewElement);
-	            });
-	        }
+            const review = {
+                username: username,
+                filmTitle: filmSelect.value,
+                content: reviewContent.value,
+                rating: parseInt(rating.value)
+            };
 
-	        function submitReview() {
-	            const review = {
-	                username: username,
-	                filmTitle: document.getElementById('filmSelect').value,
-	                content: document.getElementById('reviewContent').value,
-	                rating: parseInt(document.getElementById('rating').value)
-	            };
+            fetch('/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(review)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Review submitted successfully!');
+                    document.getElementById('reviewForm').reset();
+                    loadReviews();
+                } else {
+                    throw new Error('Failed to submit review');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting review. Please try again.');
+            });
+        }
 
-	            fetch('/api/reviews', {
-	                method: 'POST',
-	                headers: {
-	                    'Content-Type': 'application/json',
-	                },
-	                body: JSON.stringify(review)
-	            })
-	            .then(response => {
-	                if (response.ok) {
-	                    alert('Review submitted successfully!');
-	                    document.getElementById('reviewForm').reset();
-	                    loadReviews();
-	                } else {
-	                    throw new Error('Failed to submit review');
-	                }
-	            })
-	            .catch(error => {
-	                console.error('Error:', error);
-	                alert('Error submitting review. Please try again.');
-	            });
-	        }
-	       
-	    </script>
-		/*]]>*/
-		
+        function trackView(title) {
+            if (!title) return;
+            
+            fetch(`/api/films/${encodeURIComponent(title)}/view`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Failed to track view');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        /*]]>*/
+    </script>
 </body>
 </html>

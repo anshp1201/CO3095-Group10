@@ -14,9 +14,10 @@ import java.util.List;
 
 @Controller
 public class DashboardController {
+    
     @Autowired
     private FilmStorage filmStorage;
-
+    
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         // Check for logged in user
@@ -25,10 +26,19 @@ public class DashboardController {
             return "redirect:/login";
         }
         
-        // Add both user and films to the model
-        List<String> genres = Arrays.asList("Action", "Comedy", "Sci-Fi", "Romance");
+        // Add user data to model
         model.addAttribute("user", loggedInUser);
-        model.addAttribute("films", filmStorage.getAllFilms());
+        
+        // Add films data
+        List<Film> allFilms = filmStorage.getAllFilms();
+        model.addAttribute("films", allFilms);
+        
+        // Add trending films
+        List<Film> trendingFilms = filmStorage.getTrendingFilms();
+        model.addAttribute("trendingFilms", trendingFilms);
+        
+        // Add genres list
+        List<String> genres = Arrays.asList("Action", "Romance", "Sci-Fi", "Comedy", "Drama", "Crime", "Thriller", "Biography");
         model.addAttribute("genres", genres);
         
         return "dashboard";
