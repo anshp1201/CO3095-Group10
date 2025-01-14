@@ -1,7 +1,9 @@
 package com.example.filmrecommendation.controller;
 
 import com.example.filmrecommendation.model.Collection;
+
 import com.example.filmrecommendation.service.CollectionStorage;
+import com.example.filmrecommendation.service.NotificationStorage;
 
 import java.util.List;
 
@@ -12,8 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/collections")
 public class CollectionController {
+	
     @Autowired
     private CollectionStorage collectionStorage;
+    
+    @Autowired 
+    private NotificationStorage notificationStorage;
     
     
     //End point used to Create a new Collection for a specific user.
@@ -23,6 +29,9 @@ public class CollectionController {
             @RequestParam("collectionName") String collectionName) {
         try {
             collectionStorage.createCollection(username, collectionName);
+
+            notificationStorage.addNotification("Created collection :"+ collectionName, "Better get to adding those movies to your personal collection");
+            
             return ResponseEntity.ok("Collection created successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
@@ -57,6 +66,7 @@ public class CollectionController {
 
             String message = "Movie added to collection successfully.";
             System.out.println(message);
+            notificationStorage.addNotification(movieTitle + " added to "+ collectionName, " ");
             return ResponseEntity.ok(message);
         } catch (Exception e) {
             String message = "Failed to add movie: " + e.getMessage();
