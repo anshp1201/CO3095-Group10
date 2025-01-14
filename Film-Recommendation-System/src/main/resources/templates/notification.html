@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Notifications</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+	<h2>Notifications:</h2>
+	
+	<form th:action="@{'/notifications/clear'}" method="post">
+		<button type="submit" class="btn-link">Clear All</button>
+	</form>
+	
+	<div class="container">  
+	<ul>
+	    <li th:each="notification : ${notifications}" class="notification-item">
+	        <strong th:text="${notification.title}"></strong>
+	        <p><span th:text="${notification.message}"></span></p>
+			<!--p>Notification ID: <span th:text="${notification.id}"></p-->
+				<form th:action="@{'/notifications/remove/' + ${notification.id}}" method="post">
+				    <button type="submit" class="btn-link">Remove Notification</button>
+				</form>
+
+		</li>
+	</ul>
+	<form action="/dashboard" method="get" class="back-to-dashboard">
+		<button type="submit" class="btn-secondary">Back to Dashboard</button>
+	</form>
+	</div>
+</body>
+</html>
+	
 
