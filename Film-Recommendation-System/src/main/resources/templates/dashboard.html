@@ -16,10 +16,13 @@
         
         <div class="action-buttons">
             <form action="/recommendations" method="get">
-                <button type="submit">Get Recommendations</button>
+                <button type="submit" class="btn-primary">Get Recommendations</button>
             </form>
             <form action="/films" method="get">
-                <button type="submit">View Film List</button>
+                <button type="submit" class="btn-secondary">View Film List</button>
+            </form>
+            <form action="/watchlist" method="get">
+                <button type="submit" class="btn-secondary">Watchlist</button>
             </form>
         </div>
 
@@ -54,7 +57,7 @@
     
     <form action="/search" method="get" class="search-form">
         <input type="text" name="query" placeholder="Search by title, director, or genre" required>
-        <button type="submit">Search</button>
+        <button type="submit" class="btn-primary">Search</button>
     </form>
 
     <div class="reviews-section">
@@ -93,7 +96,6 @@
         </div>
 
         <div class="reviews-list" id="reviewsList">
-            <!-- Reviews will be loaded here dynamically -->
         </div>
     </div>
 
