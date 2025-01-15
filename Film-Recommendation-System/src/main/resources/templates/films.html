@@ -2,34 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Film List</title>
-	<link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-	<div class="container">
-		<h1>Available Films</h1>
-	    <table class="film-table">
-	        <thead>
-	            <tr>
-	                <th>Title</th>
-	                <th>Genre</th>
-	                <th>Director</th>
-	                <th>Average Rating</th>
-	            </tr>
-	        </thead>
-	        <tbody>
-	            <tr th:each="film : ${films}">
-	                <td th:text="${film.title}"></td>
-	                <td th:text="${film.genre}"></td>
-	                <td th:text="${film.director}"></td>
-	                <td th:text="${film.averageRating}"></td>
-	            </tr>
-	        </tbody>
-	    </table>
-	
-	    <!-- Back to Dashboard Button -->
-		<form action="/dashboard" method="get" class="back-to-dashboard">
-			<button type="submit" class="btn-primary">Back to Dashboard</button>
-		</form>
-	</div>
+    <div class="container">
+        <h1>Available Films</h1>
+        <table class="film-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Director</th>
+                    <th>Average Rating</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="film : ${films}">
+                    <td th:text="${film.title}"></td>
+                    <td th:text="${film.genre}"></td>
+                    <td th:text="${film.director}"></td>
+                    <td th:text="${film.averageRating}"></td>
+                    <td>
+                        <!-- Add to Watchlist Button -->
+                        <form th:action="@{/api/watchlist/add}" method="post" class="add-to-watchlist-form">
+                            <input type="hidden" th:name="movieTitle" th:value="${film.title}" />
+                            <button type="submit" class="btn-secondary">Add to Watchlist</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Back to Dashboard Button -->
+        <form action="/dashboard" method="get" class="back-to-dashboard">
+            <button type="submit" class="btn-primary">Back to Dashboard</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Watchlist</title>
+    <link rel="stylesheet" href="/css/watchlistcss.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header">
+            <h1>My Watchlist</h1>
+            <div class="nav-buttons">
+                <a href="/profile" th:if="${user != null}" th:text="${user.username}">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+
+        <div th:if="${watchlistItems.empty}" class="empty-watchlist">
+            <p>Your watchlist is empty. Browse the <a href="/films">film list</a> to add some movies!</p>
+        </div>
+        
+        <div th:if="${!watchlistItems.empty}" class="watchlist-grid">
+            <div th:each="film : ${watchlistItems}" class="film-card">
+                <h3 th:text="${film.title}">Film Title</h3>
+                <div class="film-details">
+                    <p>Director: <span th:text="${film.director}">Director Name</span></p>
+                    <p>Genre: <span th:text="${film.genre}">Genre</span></p>
+                    <p>Rating: <span th:text="${film.averageRating}">0.0</span></p>
+                </div>
+                <div class="card-actions">
+                    <form th:action="@{/api/watchlist/remove}" method="post" class="remove-form">
+                        <input type="hidden" name="movieTitle" th:value="${film.title}" />
+                        <button type="submit" class="btn-danger">Remove from Watchlist</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Dashboard Button -->
+        <div class="navigation-buttons">
+            <form action="/dashboard" method="get">
+                <button type="submit" class="btn-primary">Back to Dashboard</button>
+            </form>
+            <form action="/films" method="get">
+                <button type="submit" class="btn-secondary">Browse Films</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Handle remove from watchlist
+        document.querySelectorAll('.remove-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error removing film from watchlist');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error removing film from watchlist');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

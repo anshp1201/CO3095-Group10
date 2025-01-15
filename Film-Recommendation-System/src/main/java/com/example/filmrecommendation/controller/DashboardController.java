@@ -3,6 +3,8 @@ package com.example.filmrecommendation.controller;
 import com.example.filmrecommendation.model.User;
 import com.example.filmrecommendation.model.Film;
 import com.example.filmrecommendation.service.FilmStorage;
+import com.example.filmrecommendation.service.WatchlistStorage;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,8 @@ public class DashboardController {
     
     @Autowired
     private FilmStorage filmStorage;
+    @Autowired
+    private WatchlistStorage watchlistStorage;
     
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
@@ -36,6 +40,10 @@ public class DashboardController {
         // Add trending films
         List<Film> trendingFilms = filmStorage.getTrendingFilms();
         model.addAttribute("trendingFilms", trendingFilms);
+        
+        // Add watchlist count
+        List<Film> watchlist = watchlistStorage.getWatchlistForUser(loggedInUser);
+        model.addAttribute("watchlistCount", watchlist.size());
         
         // Add genres list
         List<String> genres = Arrays.asList("Action", "Romance", "Sci-Fi", "Comedy", "Drama", "Crime", "Thriller", "Biography");
