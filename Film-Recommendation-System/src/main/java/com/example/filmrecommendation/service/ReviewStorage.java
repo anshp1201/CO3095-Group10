@@ -5,6 +5,8 @@ import com.example.filmrecommendation.model.Film;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.filmrecommendation.service.NotificationStorage;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,9 @@ public class ReviewStorage {
     
     @Autowired
     private FilmStorage filmStorage;
+
+    @Autowired
+    private NotificationStorage notificationStorage;
 
     public ReviewStorage() {
         reviews = loadReviews();
@@ -46,6 +51,12 @@ public class ReviewStorage {
         reviews.add(review);
         updateFilmRating(review.getFilmTitle());
         saveReviews();
+
+        try {
+			notificationStorage.addNotification("New Review Added"," ");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
     public List<Review> getReviewsByFilm(String filmTitle) {
