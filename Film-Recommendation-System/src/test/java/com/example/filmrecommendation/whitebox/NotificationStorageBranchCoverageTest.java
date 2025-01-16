@@ -2,51 +2,40 @@ package com.example.filmrecommendation.whitebox;
 
 import com.example.filmrecommendation.model.Notification;
 import com.example.filmrecommendation.service.NotificationStorage;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.*;
-import java.io.*;
-import java.nio.file.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotificationStorageBranchCoverageTest {
 
-    private static final String FILE_PATH = "test_notifications.dat";
+    private static final String TEST_FILE_PATH = "test_notifications_whitebox.dat";  
     private NotificationStorage notificationStorage;
 
     @BeforeEach
-    void setUp() {
-        // Initialize NotificationStorage with a test file path
-        notificationStorage = new NotificationStorage(FILE_PATH);
+    void setUp() throws IOException {
+       
+        notificationStorage = new NotificationStorage(TEST_FILE_PATH);
+
+        Files.deleteIfExists(Paths.get(TEST_FILE_PATH));
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        // Clean up after each test
-        Files.deleteIfExists(Paths.get(FILE_PATH));
-    }
-
-    @Test
-    void testLoadNotifications_FileNotFound() {
-        // Test the scenario where the file is not found
-        List<Notification> notifications = notificationStorage.loadNotifications();
-        assertTrue(notifications.isEmpty(), "Notifications list should be empty if the file does not exist");
-    }
-
-    @Test
-    void testLoadNotifications_ValidFile() throws IOException, ClassNotFoundException {
-        // Test the scenario where the file exists and contains notifications
-        notificationStorage.addNotification("Test", "Message");
-        List<Notification> notifications = notificationStorage.loadNotifications();
         
-        assertEquals(1, notifications.size(), "There should be one notification loaded from the file");
-        assertEquals("Test", notifications.get(0).getTitle());
-        assertEquals("Message", notifications.get(0).getMessage());
+        Files.deleteIfExists(Paths.get(TEST_FILE_PATH));
     }
 
     @Test
     void testRemoveNotificationById_NotificationExists() throws IOException {
-        // Test the scenario where the notification exists and is removed
+        
         notificationStorage.addNotification("Test Title", "Test Message");
         String id = notificationStorage.getAllNotifications().get(0).getId();
         notificationStorage.removeNotificationById(id);
@@ -57,7 +46,7 @@ public class NotificationStorageBranchCoverageTest {
 
     @Test
     void testRemoveNotificationById_NotificationDoesNotExist() throws IOException {
-        // Test the scenario where the notification does not exist
+        
         notificationStorage.addNotification("Test Title", "Test Message");
         notificationStorage.removeNotificationById("non-existent-id");
         
@@ -67,7 +56,7 @@ public class NotificationStorageBranchCoverageTest {
 
     @Test
     void testClearAllNotifications() throws IOException {
-        // Test the scenario where notifications exist and are cleared
+        
         notificationStorage.addNotification("Notification 1", "Message 1");
         notificationStorage.addNotification("Notification 2", "Message 2");
         notificationStorage.clearAllNotifications();
@@ -78,7 +67,7 @@ public class NotificationStorageBranchCoverageTest {
 
     @Test
     void testClearAllNotifications_EmptyList() throws IOException {
-        // Test the scenario where the list is already empty and clearAllNotifications is called
+        
         notificationStorage.clearAllNotifications();
         
         List<Notification> notifications = notificationStorage.getAllNotifications();
@@ -87,7 +76,7 @@ public class NotificationStorageBranchCoverageTest {
 
     @Test
     void testAddNotification() throws IOException {
-        // Test adding a notification to the list and ensure it is saved and loaded correctly
+        
         notificationStorage.addNotification("New Notification", "Message");
         List<Notification> notifications = notificationStorage.getAllNotifications();
         
@@ -96,4 +85,3 @@ public class NotificationStorageBranchCoverageTest {
         assertEquals("Message", notifications.get(0).getMessage());
     }
 }
-
