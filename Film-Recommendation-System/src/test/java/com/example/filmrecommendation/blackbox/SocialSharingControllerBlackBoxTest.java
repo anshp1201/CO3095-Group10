@@ -19,24 +19,23 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.boot.test.context.SpringBootTest;
 
-@AutoConfigureMockMvc
+@SpringBootTest 
+@AutoConfigureMockMvc 
 public class SocialSharingControllerBlackBoxTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private FilmStorage filmStorage;
+    private FilmStorage filmStorage;  
 
     @MockBean
-    private UserStorage userStorage;
+    private UserStorage userStorage;  
 
-    @Mock
-    private HttpSession session;
-
-    @Mock
-    private Model model;
+    @Autowired
+    private SocialSharingController controller; 
 
     private User loggedInUser;
     private Film testFilm;
@@ -45,38 +44,47 @@ public class SocialSharingControllerBlackBoxTest {
     void setUp() {
         loggedInUser = new User();
         loggedInUser.setUsername("testUser");
+
         testFilm = new Film();
-        testFilm.setFilmID("123");
+        testFilm.setFilmid("123");
         testFilm.setTitle("Test Film");
     }
 
     @Test
     void testGetShare_FilmExists() throws Exception {
-        when(session.getAttribute("loggedInUser")).thenReturn(loggedInUser);
+       
         when(filmStorage.getFilm("123")).thenReturn(testFilm);
 
+        
         mockMvc.perform(get("/share")
                 .param("FilmID", "123")
-                .sessionAttr("loggedInUser", loggedInUser))
+                .sessionAttr("loggedInUser", loggedInUser))  
                 .andExpect(status().isOk())
                 .andExpect(view().name("share"))
                 .andExpect(model().attributeExists("user"))
                 .andExpect(model().attributeExists("film"))
                 .andExpect(model().attribute("user", loggedInUser))
                 .andExpect(model().attribute("film", testFilm));
+
+        
+        verify(filmStorage, times(1)).getFilm("123");
     }
 
     @Test
     void testGetShare_FilmNotFound() throws Exception {
-        when(session.getAttribute("loggedInUser")).thenReturn(loggedInUser);
+        
         when(filmStorage.getFilm("123")).thenReturn(null);
 
+        
         mockMvc.perform(get("/share")
                 .param("FilmID", "123")
-                .sessionAttr("loggedInUser", loggedInUser))
+                .sessionAttr("loggedInUser", loggedInUser))  
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
                 .andExpect(model().attributeExists("error"))
                 .andExpect(model().attribute("error", "Film not found for FilmID: 123"));
+
+        
+        verify(filmStorage, times(1)).getFilm("123");
     }
 }
