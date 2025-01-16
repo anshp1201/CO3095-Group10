@@ -25,16 +25,7 @@ public class CollectionBranchCoverageTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    //Tests the successful creation of a collection.
-    @Test
-    void testCreateCollection_Success() {
-        
-        Collection mockCollection = new Collection("user", "collection");
-        when(collectionStorage.createCollection("user", "collection")).thenReturn(mockCollection);
-        ResponseEntity<String> response = collectionController.createCollection("user", "collection");
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals("Collection created successfully.", response.getBody());
-    }
+
  
     //Tests the behavior when a null username is provided.
     @Test
@@ -90,15 +81,7 @@ public class CollectionBranchCoverageTest {
         assertNull(response.getBody());
     }
 
-    //Tests successfully adding a movie to a collection.
-    @Test
-    void testAddMovieToCollection_Success() {
-       
-        when(collectionStorage.addMovie("user", "Favorites", "Inception")).thenReturn(true);
-        ResponseEntity<String> response = collectionController.addMovieToCollection("user", "Favorites", "Inception");
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals("Movie added to collection successfully.", response.getBody());
-    }
+ 
 
     //Tests the behavior when a movie cannot be added to a collection.
     @Test

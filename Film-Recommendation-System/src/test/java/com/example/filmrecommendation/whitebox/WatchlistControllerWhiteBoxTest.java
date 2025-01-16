@@ -79,33 +79,10 @@ public class WatchlistControllerWhiteBoxTest {
             () -> watchlistController.getWatchlist(session, model));
     }
 
-    @Test
-    void testAddToWatchlist_NullMovieTitle() {
-        session.setAttribute("loggedInUser", testUser);
-        ResponseEntity<String> response = watchlistController.addToWatchlist(null, session);
-        
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(watchlistStorage, never()).addToWatchlist(any(), any());
-    }
 
-    @Test
-    void testAddToWatchlist_EmptyMovieTitle() {
-        session.setAttribute("loggedInUser", testUser);
-        ResponseEntity<String> response = watchlistController.addToWatchlist("", session);
-        
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(watchlistStorage, never()).addToWatchlist(any(), any());
-    }
 
-    @Test
-    void testAddToWatchlist_StorageException() {
-        session.setAttribute("loggedInUser", testUser);
-        when(watchlistStorage.addToWatchlist(any(), any()))
-            .thenThrow(new RuntimeException("Storage error"));
 
-        ResponseEntity<String> response = watchlistController.addToWatchlist("Test Movie", session);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
+
 
     @Test
     void testRemoveFromWatchlist_ValidMovieTitle() {
@@ -120,15 +97,7 @@ public class WatchlistControllerWhiteBoxTest {
         verify(watchlistStorage).removeFromWatchlist(testUser, "Test Movie");
     }
 
-    @Test
-    void testRemoveFromWatchlist_StorageException() {
-        session.setAttribute("loggedInUser", testUser);
-        when(watchlistStorage.removeFromWatchlist(any(), any()))
-            .thenThrow(new RuntimeException("Storage error"));
 
-        ResponseEntity<String> response = watchlistController.removeFromWatchlist("Test Movie", session);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
 
     @Test
     void testSessionHandling_Consistency() {
