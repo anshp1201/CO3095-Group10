@@ -94,6 +94,11 @@ public class Film implements Serializable{
 	public void setActors(List<String> actors) {
 		this.actors = actors;
 	}
+
+	public void setViewCount(int i) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

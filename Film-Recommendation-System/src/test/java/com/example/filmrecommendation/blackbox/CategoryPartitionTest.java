@@ -3,23 +3,6 @@ package com.example.filmrecommendation.blackbox;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Category Partition Testing
- * Categories:
- * 1. Username
- *    - Valid: alphanumeric, 3-20 characters
- *    - Invalid: special characters, too short, too long
- * 2. Password
- *    - Valid: 8+ characters, with numbers
- *    - Invalid: too short, no numbers
- * 3. Authentication State
- *    - Logged in
- *    - Not logged in
- * 4. Genre Preferences
- *    - Valid genres
- *    - Invalid/empty genres
- */
-
 public class CategoryPartitionTest {
 	
 	//Tests  valid and invalid partitions for usernames.

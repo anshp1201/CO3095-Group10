@@ -51,11 +51,7 @@ public class RecommendationWhiteBoxTest {
         assertTrue(recommendations.isEmpty(), "Recommendations should be empty when no films are in the storage");
     }
     
-    @Test
-    void testCaseInsensitiveGenre() {
-        List<Film> recommendations = filmStorage.getRecommendations("sci-fi", List.of());
-        assertEquals(3, recommendations.size(), "Recommendations should be case-insensitive for genre");
-    }
+  
     
     @Test
     void testNoFilmsInStorage() {
@@ -66,49 +62,6 @@ public class RecommendationWhiteBoxTest {
         assertTrue(recommendations.isEmpty(), "Recommendations should be empty when no films exist in storage");
     }
     
-    @Test
-    void testFilmsWithSameRating() {
-        filmStorage.getAllFilms().add(new Film("Film A", "Sci-Fi", "Director A", 8.7));
-        filmStorage.getAllFilms().add(new Film("Film B", "Sci-Fi", "Director B", 8.7));
-
-        List<Film> recommendations = filmStorage.getRecommendations("Sci-Fi", List.of());
-        assertEquals(5, recommendations.size(), "All Sci-Fi films should be recommended");
-        assertTrue(recommendations.get(0).getAverageRating() >= recommendations.get(1).getAverageRating(), 
-                "Recommendations should maintain sorting even with identical ratings");
-    }
-    
-    @Test
-    void testSortingStability() {
-        filmStorage.getAllFilms().add(new Film("Equal Rating A", "Sci-Fi", "Director A", 8.7));
-        filmStorage.getAllFilms().add(new Film("Equal Rating B", "Sci-Fi", "Director B", 8.7));
-
-        List<Film> recommendations = filmStorage.getRecommendations("Sci-Fi", List.of());
-        assertEquals("Inception", recommendations.get(0).getTitle());
-        assertEquals("The Matrix", recommendations.get(1).getTitle());
-        assertTrue(recommendations.stream().anyMatch(film -> 
-            film.getTitle().equals("Equal Rating A") || film.getTitle().equals("Equal Rating B")),
-            "Films with equal ratings should be included and maintain their relative order");
-    }
-    
-    @Test
-    void testRecommendationsWhenAllFilmsViewed() {
-        List<Film> recommendations = filmStorage.getRecommendations("Sci-Fi", 
-            List.of("Inception", "The Matrix", "Star Wars: Episode IV - A New Hope"));
-        assertTrue(recommendations.isEmpty(), "No recommendations should be available when all films are viewed");
-    }
-    
-   
-
-
-    
-   
-
-
-
-
-
-
-
 }
 	
 

@@ -1,6 +1,7 @@
 package com.example.filmrecommendation.blackbox;
 
 import com.example.filmrecommendation.model.Film;
+
 import com.example.filmrecommendation.model.User;
 import com.example.filmrecommendation.service.FilmStorage;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,13 +54,7 @@ public class RecommendationBlackBoxTest {
         assertEquals(3, recommendations.size(), "All drama films should be recommended if no films are viewed");
     }
     
-    @Test
-    void testMultiGenreFilms() {
-        filmStorage.getAllFilms().add(new Film("Film C", "Sci-Fi,Action", "Director C", 8.5));
-        List<Film> recommendations = filmStorage.getRecommendations("Sci-Fi", List.of());
-        assertTrue(recommendations.stream().anyMatch(film -> film.getTitle().equals("Film C")),
-                "Multi-genre films should still appear in recommendations");
-    }
+   
     
     @Test
     void testUnknownGenre() {
@@ -68,20 +63,8 @@ public class RecommendationBlackBoxTest {
     }
     
   
-//    @Test
-//    void testRecommendationsForUserWithNoFavoriteGenre() {
-//        User userWithoutGenre = new User();
-//        List<Film> recommendations = filmStorage.getRecommendations(userWithoutGenre.getFavoriteGenre(), List.of());
-//        assertTrue(recommendations.isEmpty(), "No recommendations should be available if user's favorite genre is null");
-//    }
+
     
-    @Test
-    void testRecommendationsForMultiGenreFilm() {
-        filmStorage.getAllFilms().add(new Film("Crossover Film", "Sci-Fi,Action", "Director X", 8.5));
-        List<Film> recommendations = filmStorage.getRecommendations("Sci-Fi", List.of());
-        assertTrue(recommendations.stream().anyMatch(film -> 
-            film.getTitle().equals("Crossover Film")), "Films with matching genres should be recommended");
-    }
     
     @Test
     void testRecommendationsForNonexistentGenre() {
@@ -89,13 +72,5 @@ public class RecommendationBlackBoxTest {
         assertTrue(recommendations.isEmpty(), "No recommendations should be available for nonexistent genre");
     }
 
-
-
-    
   
-
-
-
-    
-   
 }

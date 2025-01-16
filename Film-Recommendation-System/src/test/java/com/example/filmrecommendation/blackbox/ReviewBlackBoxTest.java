@@ -1,4 +1,4 @@
-package com.example.filmrecommendation.test;
+package com.example.filmrecommendation.blackbox;
 
 import com.example.filmrecommendation.model.Film;
 import com.example.filmrecommendation.service.FilmStorage;
@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class BlackBoxTest {
+public class ReviewBlackBoxTest {
 
     @Autowired
     private FilmStorage filmStorage;

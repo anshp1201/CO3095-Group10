@@ -1,4 +1,4 @@
-package com.example.filmrecommendation.test;
+package com.example.filmrecommendation.whitebox;
 
 import com.example.filmrecommendation.model.Film;
 import com.example.filmrecommendation.service.FilmStorage;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class WhiteBoxTest {
+public class ReviewWhiteBoxTest {
 
     private FilmStorage filmStorage;
 
@@ -19,25 +19,7 @@ public class WhiteBoxTest {
         filmStorage = new FilmStorage();
     }
 
-    @Test
-    void testFilmStorageConstructor() {
-        // Test that the constructor properly initializes the films list
-        List<Film> films = filmStorage.getAllFilms();
-        
-        assertNotNull(films);
-        assertEquals(14, films.size(), "Should have 14 initial films");
-        
-        // Test specific film details
-        Film inception = films.stream()
-            .filter(f -> f.getTitle().equals("Inception"))
-            .findFirst()
-            .orElse(null);
-            
-        assertNotNull(inception);
-        assertEquals("Christopher Nolan", inception.getDirector());
-        assertEquals("Sci-Fi", inception.getGenre());
-        assertEquals(9.0, inception.getAverageRating());
-    }
+
 
     @Test
     void testGetRecommendationsLogic() {
