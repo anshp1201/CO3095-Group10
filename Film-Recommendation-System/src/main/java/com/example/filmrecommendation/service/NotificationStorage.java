@@ -11,15 +11,21 @@ import java.util.Optional;
 @Service
 public class NotificationStorage {
 
-    private static final String FILE_PATH = "notifications.dat";
+    private static String FILE_PATH = "notifications.dat";
     private List<Notification> notifications;
 
     public NotificationStorage() {
         notifications = loadNotifications();
     }
 
+    // testing purposes
+    public NotificationStorage(String filePath) {
+        FILE_PATH = filePath;
+        notifications = loadNotifications();
+    }
+
     @SuppressWarnings("unchecked")
-	private List<Notification> loadNotifications() {
+	public List<Notification> loadNotifications() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
             return (List<Notification>) ois.readObject();
         } catch (FileNotFoundException e) {
@@ -66,4 +72,3 @@ public class NotificationStorage {
         saveNotifications(); 
     }
 }
-
