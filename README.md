@@ -40,21 +40,22 @@ Features
 Installation
 1. Clone the Repository:
 
-git clone https://github.com/your-repository/film-recommendation-system.git
-   cd film-recommendation-system
+* git clone https://github.com/your-repository/film-recommendation-system.git
+   
+* cd film-recommendation-system
 
 2. Set Up the Database:
 
-Use the embedded database or configure your preferred database in application.properties.
+* Use the embedded database or configure your preferred database in application.properties.
 
 3. Build and Run the Application:
 
-./gradlew bootRun
+* ./gradlew bootRun
 
 4. Access the Application: Open your browser and navigate to:
 
 
-http://localhost:8080
+* http://localhost:8080
 
 ## Technologies Used
 
